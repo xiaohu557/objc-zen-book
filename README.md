@@ -120,7 +120,8 @@ Conditional bodies should always use braces even when a conditional body could b
 **Preferred:**
 
 ```objective-c
-if (!error) {
+if (!error)
+{
     return success;
 }
 ```
@@ -138,7 +139,15 @@ or
 if (!error) return success;
 ```
 
-In February 2014 the well-know [goto fail](https://gotofail.com/) was found in the Apple's SSL/TLS implementation. 
+or
+
+```objective-c
+if (!error) {
+  return success;
+}
+```
+
+In February 2014 the well-know [goto fail](https://gotofail.com/) was found in the Apple's SSL/TLS implementation.
 The bug was due to a repeated `goto` statement after an `if` condition, wrapping the `if` branch in parentheses would have prevented the issue.
 
 The code extract:
@@ -180,12 +189,16 @@ Always avoid Yoda conditions. A Yoda condition is when comparing a constant to a
 
 **Preferred:**
 ```objective-c
-if ([myValue isEqual:@42]) { ...
+if ([myValue isEqual:@42])
+{
+  ...
 ```
 
 **Not preferred:**
 ```objective-c
-if ([@42 isEqual:myValue]) { ...
+if ([@42 isEqual:myValue])
+{
+  ...
 ```
 
 ## nil and BOOL checks
@@ -193,19 +206,25 @@ if ([@42 isEqual:myValue]) { ...
 On a similar note of the Yoda conditions, also the nil check has been at the centre of debates. Some notous libraries out there use to check for an object to be or not to be nil as so:
 
 ```objective-c
-if (nil == myValue) { ...
+if (nil == myValue)
+{
+  ...
 ```
 
 One could argue that this is amiss or similar to a Yoda condition as nil is kind of a constant. The reason why sometimes programmers use this approach to prevent error that are difficult to debug. Consider the following code:
 
 ```objective-c
-if (myValue == nil) { ...
+if (myValue == nil)
+{
+  ...
 ```
 
 If a typo occurs and the programmer actually types:
 
 ```objective-c
-if (myValue = nil) { ...
+if (myValue = nil)
+{
+  ...
 ```
 
 it would be a valid assignment, indeed hard to debug if you are an experienced programmer (and therefore probably with some kind of visual impairment). That could never occur putting `nil` as argument on the left as it is nor assignable. There is also to be said that if the programmer uses this approach, he or she is perfectly aware of the underlying motivation and therefore the whole thing decades as it would be better to just double check what just typed.
@@ -214,29 +233,37 @@ More on this, to avoid all this fuss the approach that leave no space to doubt i
 
 **Preferred:**
 ```objective-c
-if (someObject) { ...
-if (![someObject boolValue]) { ...
-if (!someObject) { ...
+if (someObject)
+{ ...
+if (![someObject boolValue])
+{ ...
+if (!someObject)
+{ ...
 ```
 
 **Not Preferred:**
 ```objective-c
-if (someObject == YES) { ... // Wrong
-if (myRawValue == YES) { ... // Never do this.
-if ([someObject boolValue] == NO) { ...
+if (someObject == YES)
+{ ... // Wrong
+if (myRawValue == YES)
+{ ... // Never do this.
+if ([someObject boolValue] == NO)
+{ ...
 ```
 
 This allows also for more consistency across files and greater visual clarity.
 
 ## Golden Path
 
-When coding with conditionals, the left hand margin of the code should be the "golden" or "happy" path.  That is, don't nest `if` statements.  Multiple return statements are OK. This will avoid the growth of cyclomatic complexity and make the code easier to read because the important part of your method is not nested inside a branch but you have a visual clue of what is the most relevant code. 
+When coding with conditionals, the left hand margin of the code should be the "golden" or "happy" path.  That is, don't nest `if` statements.  Multiple return statements are OK. This will avoid the growth of cyclomatic complexity and make the code easier to read because the important part of your method is not nested inside a branch but you have a visual clue of what is the most relevant code.
 
 **Preferred:**
 
 ```objective-c
-- (void)someMethod {
-  if (![someOther boolValue]) {
+- (void)someMethod
+{
+  if (![someOther boolValue])
+  {
       return;
   }
 
@@ -247,8 +274,10 @@ When coding with conditionals, the left hand margin of the code should be the "g
 **Not preferred:**
 
 ```objective-c
-- (void)someMethod {
-  if ([someOther boolValue]) {
+- (void)someMethod
+{
+  if ([someOther boolValue])
+  {
     //Do something important
   }
 }
@@ -262,7 +291,8 @@ BOOL nameContainsSwift  = [sessionName containsString:@"Swift"];
 BOOL isCurrentYear      = [sessionDateCompontents year] == 2014;
 BOOL isSwiftSession     = nameContainsSwift && isCurrentYear;
 
-if (isSwiftSession) {
+if (isSwiftSession)
+{
     // Do something very cool
 }
 ```
@@ -300,7 +330,8 @@ When methods return an error parameter by reference, check the returned value, n
 **Preferred:**
 ```objective-c
 NSError *error = nil;
-if (![self trySomethingWithError:&error]) {
+if (![self trySomethingWithError:&error])
+{
     // Handle Error
 }
 ```
@@ -326,7 +357,7 @@ switch (condition) {
     case 3:
         // ...
         break;
-    default: 
+    default:
         // ...
         break;
 }
@@ -340,7 +371,7 @@ switch (condition) {
     case 2:
         // code executed for values 1 and 2
         break;
-    default: 
+    default:
         // ...
         break;
 }
@@ -485,7 +516,7 @@ NSNumber *shouldUseLiterals = [NSNumber numberWithBool:YES];
 NSNumber *buildingZIPCode = [NSNumber numberWithInteger:10018];
 ```
 
-For the mutable counterparts of these classes we recommend, instead, the use of the explicit classes such as `NSMutableArray`, `NSMutableString`, and so on. 
+For the mutable counterparts of these classes we recommend, instead, the use of the explicit classes such as `NSMutableArray`, `NSMutableString`, and so on.
 
 The following **should be avoided**:
 
@@ -493,8 +524,8 @@ The following **should be avoided**:
 NSMutableArray *aMutableArray = [@[] mutableCopy];
 ```
 
-The problems with the previous notation are both of efficiency and readability. 
-On the efficiency side, an unnecessarily immutable object is created and immediately thrown away; this unlikely will slow down your app (unless the method here is called frequently) but there is really no reason to do this just to save some characters. 
+The problems with the previous notation are both of efficiency and readability.
+On the efficiency side, an unnecessarily immutable object is created and immediately thrown away; this unlikely will slow down your app (unless the method here is called frequently) but there is really no reason to do this just to save some characters.
 Regarding the readability, we can see two problems here: the first is that when scanning through the code and seeing `@[]` your mind is immediately connected to and instance of `NSArray`, but in this case you need to stop and check more thoughtfully. Another aspect to take into account is that it would be very likely that someone with less experience will see your code and depending on his background he might not be very comfortable with the dichotomy between mutable and immutable objects. He or she could not be very familiar with the meaning of creating a mutable copy (obviously we are not suggesting that this knowledge is not necessary). Again, this is not something absolutely wrong but is more about code usability (that includes readability).
 
 # Class
@@ -502,7 +533,7 @@ Regarding the readability, we can see two problems here: the first is that when 
 ## Class name
 
 You should always prefix your class with **three** capital-case letters (two letters are reserved for Apple classes), this looking-weird practice is done to mitigate the notable absence of namespaces in our favorite language.
-Some developers don't follow this practice for model objects (we observed this practice especially for Core Data objects), we advice to strictly follow this convention also in the case of Core Data objects because you might end up merging your Managed Object Model with other MOMs, maybe coming from third party library. 
+Some developers don't follow this practice for model objects (we observed this practice especially for Core Data objects), we advice to strictly follow this convention also in the case of Core Data objects because you might end up merging your Managed Object Model with other MOMs, maybe coming from third party library.
 As you may already have noticed, in this book the class (but not only) prefix is `ZOC`.
 
 There is another good practice that you might want to follow while choosing the name for your classes: when you're creating a subclass, you should put the specifying name part between the class prefix and the superclass name. This is better explained with an example: if you have a class named `ZOCNetworkClient`, example of subclass name will be `ZOCTwitterNetworkClient` (note "Twitter" between "ZOC" and "NetworkClient"); or, following the same rule, a `UIViewController` subclass would `ZOCTimelineViewController`.
@@ -519,9 +550,12 @@ In these days with ARC, it is less likely that you will need to implement the de
 - (instancetype)init
 {
     self = [super init]; // call the designated initializer
-    if (self) {
+
+    if (self)
+    {
         // Custom initialization
     }
+
     return self;
 }
 ```
@@ -529,11 +563,11 @@ In these days with ARC, it is less likely that you will need to implement the de
 It's interesting to understand why do we need to set the value of `self` with the return value of `[super init]` and what happens if we don't do that.
 
 Let's do a step back: we are so used to type expressions like `[[NSObject alloc] init]` that the difference between `alloc` and `init` fades away. A peculiarity of Objective-C  is the so called *two stage creation*. This means that the allocation and the initialization are two separate steps, and therefore two different methods need to be called: `alloc` and `init`.
-- `alloc` is responsible for the object allocation. This process involve the allocation of enough memory to hold the object from the application virtual memory, writing the `isa` pointer, initializes the retain count, and zeroing all the instance variables. 
+- `alloc` is responsible for the object allocation. This process involve the allocation of enough memory to hold the object from the application virtual memory, writing the `isa` pointer, initializes the retain count, and zeroing all the instance variables.
 - `init` is responsible for initializing the object, that means brings the object in an usable state. This typically means set the instance variable of an object to reasonable and useful initial values.
 
-The `alloc` method will return a valid instance of an uninitialized object. Every message sent to this instance will be translated into an `objc_msgSend()` call where the parameter named `self` will be the pointer returned by `alloc`; in this way `self` is implicitly available in the scope of every methods. 
-To conclude the two step creation the first method sent to a newly allocated instance should, by convention, be an `init` method. Notably the `init` implementation of `NSObject` is not doing more than simply return `self`. 
+The `alloc` method will return a valid instance of an uninitialized object. Every message sent to this instance will be translated into an `objc_msgSend()` call where the parameter named `self` will be the pointer returned by `alloc`; in this way `self` is implicitly available in the scope of every methods.
+To conclude the two step creation the first method sent to a newly allocated instance should, by convention, be an `init` method. Notably the `init` implementation of `NSObject` is not doing more than simply return `self`.
 
 There is another important part of the contract with `init`: the method can (and should) signal to the caller that it wasn't able to successfully finish the initialization by returning `nil`; the initialization can fail for various reasons such as an input passed in the wrong format or the failure in successfully initialize a needed object.
 This is lead us to understand why you should always call `self = [super init]`, if your superclass is stating that it wasn't able to successfully initialize itself, you must assume that you are in an inconsistent state and therefore do not proceed with your own initialization and return `nil` as well in your implementation. If you fail to do so you might end up dealing with an object that is not usable, that will not behave as expected and that might eventually lead to crash your app.
@@ -542,7 +576,7 @@ The ability to re-assign `self` can also be exploited by the `init` methods to r
 
 ### Designated and Secondary Initializers
 
-Objective-C have the concept of designated and secondary initializers. 
+Objective-C have the concept of designated and secondary initializers.
 The designated initializer is the initializer that takes the full complement of initialization parameters, the secondary initializers are one or more initializer methods that calls the designated initializer providing one or more default values for the initialization parameter.
 
 ```objective-c
@@ -553,11 +587,14 @@ The designated initializer is the initializer that takes the full complement of 
                      location:(CLLocation *)location
 {
     self = [super init];
-    if (self) {
+
+    if (self)
+    {
         _title    = title;
         _date     = date;
         _location = location;
     }
+
     return self;
 }
 
@@ -581,7 +618,7 @@ Given the above example `initWithTitle:date:location:` is the designated initial
 
 A class should always have one and only one designated initializer, all other init methods should call the designated one (even though there are an exception to this case).
 This dichotomy does not dictate any requirement about which initializer should be called.
-It should rather be valid to call any designated initializer in the class hierarchy, and it should be guaranteed that *all* the designated initializer in the class hierarchy are called starting from the furthest ancestor (typically `NSObject`) down to your class. 
+It should rather be valid to call any designated initializer in the class hierarchy, and it should be guaranteed that *all* the designated initializer in the class hierarchy are called starting from the furthest ancestor (typically `NSObject`) down to your class.
 Practically speaking this means that the first initialization code executed is the furthest ancestor, and then going down to the class hierarchy; giving to all the classes in the hierarchy the chance to do their specific part of initialization. This totally make sense: you want that everything you inherit from your superclass is in an usable state before doing your actual work.
 Even though it isn't explicitly stated, all the classes in Apple's frameworks are guaranteed to respect this contract and your classes should do the same to be sure to be a good citizen and behave correctly and as expected.
 
@@ -602,9 +639,12 @@ A typical example is whether you create a `UIViewController` subclass overriding
 {
     // call to the superclass designated initializer
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
+
+    if (self)
+    {
         // Custom initialization
     }
+
     return self;
 }
 
@@ -617,7 +657,7 @@ In case you want to provide your own designated initializer there are three step
 
 1. Declare your designated initializer, being sure to call your immediate superclass's designated initializer.
 2. Override the immediate superclass's designated initializer calling your new designated initializer.
-3. Document the new designated initializer. 
+3. Document the new designated initializer.
 
 Lots of developers often miss the last two steps, this is not only a sign of little care, but in the case of the step two is clearly against the contract with the framework and can lead to very non-deterministic behaviors and bugs.
 Let's see an example of the correct way to implement this:
@@ -629,9 +669,12 @@ Let's see an example of the correct way to implement this:
 {
     // call to the immediate superclass's designated initializer
     self = [super initWithNibName:nil bundle:nil];
-    if (self) {
+
+    if (self)
+    {
         _news = news;
     }
+
     return self;
 }
 
@@ -668,7 +711,7 @@ Here the header relative to the implementation of the previous example (note the
 A corollary of what described above is that you should never call a secondary initializer from within the designated one (if the secondary initializer respects the contract, it will call the designated one). Doing so, the call is very likely to invoke one of the subclass's overridden init methods and it will result in infinite recursion.
 
 There is however an exception to all the rules laid out before that is whether an object conforms to the `NSCoding` protocol and it is initialized through the method `initWithCoder:`.
-We should distinguish between the case where the superclass is adopting `NSCoding` and when not. 
+We should distinguish between the case where the superclass is adopting `NSCoding` and when not.
 In the former case, if you just call `[super initWithCoder:]` you will probably have some shared initialization code with the designated initializer. A good way to handle this is to extract this code in a private method (i.e.  `p_commonInit`).
 When your superclass does not adopt `NSCoding` the recommendation is to threat `initWithCoder:` as a secondary initializer and therefore call the `self` designated initializer. Note that this is against what suggested by Apple in the [Archives and Serializations Programming Guide](https://developer.apple.com/library/mac/documentation/cocoa/Conceptual/Archiving/Articles/codingobjects.html#//apple_ref/doc/uid/20000948-BCIHBJDE) where is stated:
 
@@ -693,7 +736,7 @@ This imply that in your designated initializer you should always call another se
 
 ### instancetype
 
-One often doesn't realize that Cocoa is full of conventions, and they can help the compiler being a little bit more smart. Whether the compiler encounters `alloc` or `init` methods, it will know that, even though the return type of both method is `id`, those methods will always return objects that are an instance of the receiving class's type. As a consequence, this allows the compiler to provide and enforce the type checking (i.e. check that the methods called on the returned instance are valid). This kind of Clang smartness is due to what is called [related result type](http://clang.llvm.org/docs/LanguageExtensions.html#related-result-types), meaning that 
+One often doesn't realize that Cocoa is full of conventions, and they can help the compiler being a little bit more smart. Whether the compiler encounters `alloc` or `init` methods, it will know that, even though the return type of both method is `id`, those methods will always return objects that are an instance of the receiving class's type. As a consequence, this allows the compiler to provide and enforce the type checking (i.e. check that the methods called on the returned instance are valid). This kind of Clang smartness is due to what is called [related result type](http://clang.llvm.org/docs/LanguageExtensions.html#related-result-types), meaning that
 
 > messages sent to one of alloc and init methods will have the same static type as the instance of the receiver class
 
@@ -701,9 +744,14 @@ To have more information about the convention that allow to automatically identi
 A related result type can be explicitly stated using the `instancetype` keyword as return type and this can be very helpful in situation where a factory method or convenience constructor is used. This will hint the compiler with the correct type checking and, probably more important, will behave correctly also when subclassing.
 
 ```objective-c
+
+
 @interface ZOCPerson
+
 + (instancetype)personWithName:(NSString *)name;
+
 @end
+
 ```
 
 Even though, according to the clang specification, `id` can be promoted to `instancetype` by the compiler. In the case of `alloc` or `init` we strongly encourage to use the return type `instancetype` for all class and instance methods that returns an instance of the class.
@@ -732,34 +780,40 @@ The beauty of this pattern is that the caller can be completely unaware of the c
 In our experience the use of a Class Cluster can be very helpful in removing a lot of conditional code.
 A typical example of this is when you have the same UIViewController subclass for both iPhone and iPad, but the behavior is slightly different depending on the the device.
 The naïve implementation is to put some conditional code checking the device in the methods where the different logic is needed, even though initially the place where this conditional logic is applied may be quite few they naturally tend to grow producing an explosion of code paths.
-A better design can be achieved by creating an abstract and generic view controller that will contain all the shared logic and then two specializing subclass for every device. 
+A better design can be achieved by creating an abstract and generic view controller that will contain all the shared logic and then two specializing subclass for every device.
 The generic view controller will check the current device idiom and depending on that it will return the appropriate subclass.
 
 
 ```objective-c
+
 @implementation ZOCKintsugiPhotoViewController
 
 - (id)initWithPhotos:(NSArray *)photos
 {
-    if ([self isMemberOfClass:ZOCKintsugiPhotoViewController.class]) {
+    if ([self isMemberOfClass:ZOCKintsugiPhotoViewController.class])
+    {
         self = nil;
 
-        if ([UIDevice isPad]) {
+        if ([UIDevice isPad])
+        {
             self = [[ZOCKintsugiPhotoViewController_iPad alloc] initWithPhotos:photos];
         }
-        else {
+        else
+        {
             self = [[ZOCKintsugiPhotoViewController_iPhone alloc] initWithPhotos:photos];
         }
+
         return self;
     }
+
     return [super initWithNibName:nil bundle:nil];
 }
 
 @end
 ```
 
-The previous code example show how to create a class cluster. First of all the `[self isMemberOfClass:ZOCKintsugiPhotoViewController.class]` is done to prevent the necessity to override the init method in the subclass in order to prevent an infinite recursion. 
-When `[[ZOCKintsugiPhotoViewController alloc] initWithPhotos:photos]` will get called the previous check will be true, the `self = nil` is to remove every reference to the instance of `ZOCKintsugiPhotoViewController` that it will be deallocated , following there is the logic to choose which subclass should be initialized. 
+The previous code example show how to create a class cluster. First of all the `[self isMemberOfClass:ZOCKintsugiPhotoViewController.class]` is done to prevent the necessity to override the init method in the subclass in order to prevent an infinite recursion.
+When `[[ZOCKintsugiPhotoViewController alloc] initWithPhotos:photos]` will get called the previous check will be true, the `self = nil` is to remove every reference to the instance of `ZOCKintsugiPhotoViewController` that it will be deallocated , following there is the logic to choose which subclass should be initialized.
 Let's assume that we are running this code on an iPhone and that `ZOCKintsugiPhotoViewController_iPhone` is not overriding `initWithPhotos:`; in this case, when executing `self = [[ZOCKintsugiPhotoViewController_iPhone alloc] initWithPhotos:photos];` the `ZOCKintsugiPhotoViewController` will be called and here is when the first check comes handy, given that now is not exactly  `ZOCKintsugiPhotoViewController` the check will be false calling the `return [super initWithNibName:nil bundle:nil];` this will make continue the initialization following the correct initialization path highlighted in the previous session.
 
 #### Singleton
@@ -772,9 +826,11 @@ Nevertheless, unavoidable singleton objects should use a thread-safe pattern for
 {
    static id sharedInstance = nil;
    static dispatch_once_t onceToken = 0;
+
    dispatch_once(&onceToken, ^{
       sharedInstance = [[self alloc] init];
    });
+
    return sharedInstance;
 }
 ```
@@ -785,11 +841,15 @@ The use of dispatch_once(), which is synchronous, replaces the following, yet ob
 + (instancetype)sharedInstance
 {
     static id sharedInstance;
+
     @synchronized(self) {
-        if (sharedInstance == nil) {
+
+        if (sharedInstance == nil)
+        {
             sharedInstance = [[MyClass alloc] init];
         }
     }
+
     return sharedInstance;
 }
 ```
@@ -844,7 +904,7 @@ There is however an exception to what stated before: you must never use the sett
 
 * [Advanced Memory Management Programming Guide](https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/MemoryMgmt/Articles/mmPractical.html#//apple_ref/doc/uid/TP40004447-SW6) under the self-explanatory section "Don't Use Accessor Methods in Initializer Methods and dealloc";
 * [Migrating to Modern Objective-C](http://adcdownload.apple.com//wwdc_2012/wwdc_2012_session_pdfs/session_413__migrating_to_modern_objectivec.pdf) at WWDC 2012 at slide 27;
-* in a [pull request](https://github.com/NYTimes/objective-c-style-guide/issues/6) form Dave DeLong's. 
+* in a [pull request](https://github.com/NYTimes/objective-c-style-guide/issues/6) form Dave DeLong's.
 
 Moreover, using the setter in the init will not play nicely with `UIAppearence` proxy (please refer to [UIAppearance for Custom Views](http://petersteinberger.com/blog/2013/uiappearance-for-custom-views/) for additional informations).
 
@@ -883,12 +943,19 @@ Properties that stores a block, in order to keep it alive after the end of the d
 In order to achieve a public getter and a private setter, you can declare the public property as `readonly` and re-declare the same property in the the class extension as `readwrite`:
 
 ```objective-c
+
+
 @interface MyClass : NSObject
+
 @property (nonatomic, readonly) NSObject *object
+
 @end
 
+
 @implementation MyClass ()
+
 @property (nonatomic, readwrite, strong) NSObject *object
+
 @end
 ```
 
@@ -909,7 +976,9 @@ Private properties should be declared in class extensions (anonymous categories)
 
 ```objective-c
 @interface ZOCViewController ()
+
 @property (nonatomic, strong) UIView *bannerView;
+
 @end
 ```
 
@@ -924,7 +993,8 @@ You should also avoid to expose mutable object in the public interface, because 
 @property (nonatomic, readonly) NSArray *elements
 
 /* .m */
-- (NSArray *)elements {
+- (NSArray *)elements
+{
   return [self.mutableElements copy];
 }
 ```
@@ -936,13 +1006,16 @@ There are cases when instantiating an object can be expensive and/or needs to be
 In this case, instead of allocating the object in the init method one could opt for overriding the property getter for lazy instantiation. Usually the template for this kind of operation is the following:
 
 ```objective-c
-- (NSDateFormatter *)dateFormatter {
-  if (!_dateFormatter) {
-    _dateFormatter = [[NSDateFormatter alloc] init];
-        NSLocale *enUSPOSIXLocale = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"];
-        [dateFormatter setLocale:enUSPOSIXLocale];
-        [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss.SSSSS"];
+- (NSDateFormatter *)dateFormatter
+{
+  if (!_dateFormatter)
+    {
+      _dateFormatter = [[NSDateFormatter alloc] init];
+      NSLocale *enUSPOSIXLocale = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"];
+      [dateFormatter setLocale:enUSPOSIXLocale];
+      [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss.SSSSS"];
   }
+
   return _dateFormatter;
 }
 ```
@@ -973,12 +1046,15 @@ This contracts boils down to how the lookup of those objects is done when are st
 ```objective-c
 @implementation ZOCPerson
 
-- (BOOL)isEqual:(id)object {
-    if (self == object) {
+- (BOOL)isEqual:(id)object
+{
+    if (self == object)
+    {
         return YES;
     }
 
-    if (![object isKindOfClass:[ZOCPerson class]]) {
+    if (![object isKindOfClass:[ZOCPerson class]])
+    {
         return NO;
     }
 
@@ -987,7 +1063,8 @@ This contracts boils down to how the lookup of those objects is done when are st
     return propertiesMatch;
 }
 
-- (NSUInteger)hash {
+- (NSUInteger)hash
+{
     return [self.name hash] ^ [self.birthday hash];
 }
 
@@ -1002,20 +1079,25 @@ If you can, it's always preferable to call the typed equal method in order to av
 A complete pattern for the isEqual* method should be as so:
 
 ```objective-c
-- (BOOL)isEqual:(id)object {
-    if (self == object) {
+- (BOOL)isEqual:(id)object
+{
+    if (self == object)
+    {
       return YES;
     }
 
-    if (![object isKindOfClass:[ZOCPerson class]]) {
+    if (![object isKindOfClass:[ZOCPerson class]])
+    {
       return NO;
     }
 
     return [self isEqualToPerson:(ZOCPerson *)object];
 }
 
-- (BOOL)isEqualToPerson:(Person *)person {
-    if (!person) {
+- (BOOL)isEqualToPerson:(Person *)person
+{
+    if (!person)
+    {
         return NO;
     }
 
@@ -1035,9 +1117,9 @@ Given an object instance the computation of the `hash` should be deterministic, 
 
 It is ugly, we know, but categories should always be prefixed with your lower case prefix and an underscore i.e. `- (id)zoc_myCategoryMethod`. This practice is also [recommended by Apple](https://developer.apple.com/library/ios/documentation/cocoa/conceptual/ProgrammingWithObjectiveC/CustomizingExistingClasses/CustomizingExistingClasses.html#//apple_ref/doc/uid/TP40011210-CH6-SW4).
 
-This is absolutely needed because implementing a category method with a name already existing in the extended object or in another category may result in an undefined behavior. Practically, what is going to happen is that the implementation of the last category loaded will be the one that gets called. 
+This is absolutely needed because implementing a category method with a name already existing in the extended object or in another category may result in an undefined behavior. Practically, what is going to happen is that the implementation of the last category loaded will be the one that gets called.
 
-In case you want to be sure that you're not replacing any implementation with your own category you can set the environment variable `OBJC_PRINT_REPLACED_METHODS` to `YES`, this will print in the console the names of the methods that have been replaced. 
+In case you want to be sure that you're not replacing any implementation with your own category you can set the environment variable `OBJC_PRINT_REPLACED_METHODS` to `YES`, this will print in the console the names of the methods that have been replaced.
 At the time of writing LLVM 5.1 does not emit any warning or error for this, so be careful and don't override methods in categories.
 
 A good practice is to use prefix also for category names.
@@ -1046,7 +1128,9 @@ A good practice is to use prefix also for category names.
 
 ```objective-c
 @interface NSDate (ZOCTimeExtensions)
+
 - (NSString *)zoc_timeAgoShort;
+
 @end
 ```
 
@@ -1054,11 +1138,13 @@ A good practice is to use prefix also for category names.
 
 ```objective-c
 @interface NSDate (ZOCTimeExtensions)
+
 - (NSString *)timeAgoShort;
+
 @end
 ```
 
-Category can be used to group related method in a header file. This is a very common practice in Apple's framework (nearby is proposed an extract from `NSDate` header) and we strongly encourage to do the same in your code. 
+Category can be used to group related method in a header file. This is a very common practice in Apple's framework (nearby is proposed an extract from `NSDate` header) and we strongly encourage to do the same in your code.
 In our experience creating this groups can be helpful in further refactoring: when the interface of a class starts growing can be a signal that your class is doing to much and therefore violating the Single Responsibility Principle, the previously created groups be used to better understand the different responsibilities and help in breaking down the class in more self-contained components.
 
 ```objective-c
@@ -1132,12 +1218,14 @@ The `ZOCFeedParser` is initialized with a `NSURL` to the endpoint to fetch the R
 ```objective-c
 
 @protocol ZOCFeedParserDelegate <NSObject>
+
 @optional
 - (void)feedParserDidStart:(ZOCFeedParser *)parser;
 - (void)feedParser:(ZOCFeedParser *)parser didParseFeedInfo:(ZOCFeedInfoDTO *)info;
 - (void)feedParser:(ZOCFeedParser *)parser didParseFeedItem:(ZOCFeedItemDTO *)item;
 - (void)feedParserDidFinish:(ZOCFeedParser *)parser;
 - (void)feedParser:(ZOCFeedParser *)parser didFailWithError:(NSError *)error;
+
 @end
 
 ```
@@ -1148,7 +1236,7 @@ It's a perfectly reasonable and suitable protocol to deal with RSS, I'd say. The
 @interface ZOCTableViewController : UITableViewController <ZOCFeedParserDelegate>
 ```
 
-and the final creation code is like so: 
+and the final creation code is like so:
 
 ```objective-c
 NSURL *feedURL = [NSURL URLWithString:@"http://bbc.co.uk/feed.rss"];
@@ -1178,12 +1266,14 @@ We modify our feed parser introducing the `ZOCFeedParserProtocol` protocol (in t
 @end
 
 @protocol ZOCFeedParserDelegate <NSObject>
+
 @optional
 - (void)feedParserDidStart:(id<ZOCFeedParserProtocol>)parser;
 - (void)feedParser:(id<ZOCFeedParserProtocol>)parser didParseFeedInfo:(ZOCFeedInfoDTO *)info;
 - (void)feedParser:(id<ZOCFeedParserProtocol>)parser didParseFeedItem:(ZOCFeedItemDTO *)item;
 - (void)feedParserDidFinish:(id<ZOCFeedParserProtocol>)parser;
 - (void)feedParser:(id<ZOCFeedParserProtocol>)parser didFailWithError:(NSError *)error;
+
 @end
 
 ```
@@ -1232,7 +1322,7 @@ The final code proposed here can be found [here](http://github.com/albertodebort
 
 # NSNotification
 
-When you define your own `NSNotification` you should define your notification's name as a string constant. Like any string constant that you want to make available to other classes, it should be declared as `extern` in the public interface, and defined privately in the corresponding implementation. 
+When you define your own `NSNotification` you should define your notification's name as a string constant. Like any string constant that you want to make available to other classes, it should be declared as `extern` in the public interface, and defined privately in the corresponding implementation.
 Because you're exposing this symbol in the header you should follow the usual namespace rule prefixing the notification name with the class name that belongs to.
 It's also good practice to name the notification using the verb Did/Will and terminate the name with the word "Notifications".
 
@@ -1249,14 +1339,16 @@ NSString * const ZOCFooDidBecomeBarNotification = @"ZOCFooDidBecomeBarNotificati
 ### Spacing
 
 * Indent using 4 spaces. Never indent with tabs. Be sure to set this preference in Xcode.
-* Method braces and other braces (`if`/`else`/`switch`/`while` etc.) always open on the same line as the statement but close on a new line.
+* Method braces and other braces (`if`/`else`/`switch`/`while` etc.) always open on the next line after the statement and close on a new line.
 
 **Preferred:**
 ```objective-c
-if (user.isHappy) {
+if (user.isHappy) 
+{
     //Do something
 }
-else {
+else 
+{
     //Do something else
 }
 ```
@@ -1292,7 +1384,7 @@ if (user.isHappy)
 
 ```objective-c
 [UIView animateWithDuration:1.0 animations:^{
-    // something 
+    // something
 } completion:^(BOOL finished) {
     // something
 }];
@@ -1311,7 +1403,7 @@ self.productsRequest = [[SKProductsRequest alloc] initWithProductIdentifiers:pro
 A long line of code like the one above should be carried on to the second line adhering to this style guide's Spacing section (two spaces).
 
 ```objective-c
-self.productsRequest = [[SKProductsRequest alloc] 
+self.productsRequest = [[SKProductsRequest alloc]
   initWithProductIdentifiers:productIdentifiers];
 ```
 
@@ -1351,14 +1443,14 @@ This feature can be nicely organized to group small chunk of code that usually a
 This gives a reader an important visual clue and help reduce the visual noise focusing on the most important variable in the function.
 Additionally, this technique has the advantage that all the variables declared inside the code block, as one might expect, are valid only inside that scope, this mean that the your not polluting the method's stack trace and you can reuse the variable name without having duplicated symbols.
 
-## Pragma 
+## Pragma
 
 ### Pragma Mark
 
 `#pragma mark -` is a great way to organize the code inside a class and helps you grouping methods implementation.
 We suggest to use `#pragma mark -`to separate:
 
-- methods in functional groupings 
+- methods in functional groupings
 - protocols implementations.
 - methods overridden from a superclass
 
@@ -1613,7 +1705,7 @@ If at some time after the declaration but before the invocation of the block, th
 
 ### Retain cycles on self
 
-It's important not to get into retain cycles when using blocks and asynchronous dispatches. Always set a `weak` reference to any variable that could cause a retain cycle. Moreover, it is a good practice to nil the properties holding the blocks (i.e. `self.completionBlock = nil`) this will break potential retain cycle introduced by the block capturing the scope. 
+It's important not to get into retain cycles when using blocks and asynchronous dispatches. Always set a `weak` reference to any variable that could cause a retain cycle. Moreover, it is a good practice to nil the properties holding the blocks (i.e. `self.completionBlock = nil`) this will break potential retain cycle introduced by the block capturing the scope.
 
 
 **Example:**
@@ -1671,7 +1763,7 @@ Here we dig further about the subtle things to consider about the `__weak` and t
 
 **Case 1: using the keyword `self` inside a block**
 
-If we use directly the keyword `self` inside a block, the object is retained at block declaration time within the block (actually when the block is [copied][blocks_caveat13] but for sake of simplicity we can forget about it) . A const reference to self has its place inside the block and this affects the reference counting of the object. If the block is used by other classes and/or passed around we may want to retain self as well as all the other objects used by the block since they are *needed* for the execution of the block. 
+If we use directly the keyword `self` inside a block, the object is retained at block declaration time within the block (actually when the block is [copied][blocks_caveat13] but for sake of simplicity we can forget about it) . A const reference to self has its place inside the block and this affects the reference counting of the object. If the block is used by other classes and/or passed around we may want to retain self as well as all the other objects used by the block since they are *needed* for the execution of the block.
 
 ```objective-c
 dispatch_block_t completionBlock = ^{
@@ -1731,7 +1823,7 @@ The next step is interesting.
 
 You may think, at first, this is a trick to use self inside the block avoiding the retain cycle warning. This is not the case. The strong reference to self is created at *block execution time* while using self in the block is evaluated at *block declaration time*, thus retaining the object.
 
-[Apple documentation][blocks_caveat1] reports that "For non-trivial cycles, however, you should use" this approach: 
+[Apple documentation][blocks_caveat1] reports that "For non-trivial cycles, however, you should use" this approach:
 
 ```objective-c
 MyViewController *myController = [[MyViewController alloc] init...];
@@ -1753,7 +1845,7 @@ myController.completionHandler =  ^(NSInteger result) {
 First of all, this example looks wrong to me. How can self be deallocated and be nilled out if the block itself is retained in the `completionHandler` property? The `completionHandler` property can be declared as `assign` or `unsafe_unretained` to allow the object to be deallocated after the block is passed around.
 I can't see the reason for doing that. If other objects need the object (self), the block that is passed around should retain the object and therefore the block should not be assigned to a property. No `__weak`/`__strong` usage should be involved in this case.
 
-Anyway, in other cases it is possible for weakSelf to become nil just like the second case explained (declaring a weak reference outside the block and use it inside). 
+Anyway, in other cases it is possible for weakSelf to become nil just like the second case explained (declaring a weak reference outside the block and use it inside).
 
 Moreover, what is the meaning of "trivial block" for Apple? It is my understanding that a trivial block is a block that is not passed around, it's used within a well defined and controlled scope and therefore the usage of the weak qualifier is just to avoid a retain cycle.
 
@@ -1905,7 +1997,7 @@ Delegate methods should be always have the caller as first parameter as in the a
 - (void)calculatorDidCalculateValue:(CGFloat)value;
 ```
 
-By default, methods in protocols are required to be implemented by delegate objects. It is possible to mark some of them as optional and to be explicit about the required method using the `@required` and `@optional` keywords as so: 
+By default, methods in protocols are required to be implemented by delegate objects. It is possible to mark some of them as optional and to be explicit about the required method using the `@required` and `@optional` keywords as so:
 
 ```objective-c
 @protocol ZOCSignUpViewControllerDelegate <NSObject>
@@ -2097,7 +2189,7 @@ This can be useful when there are different views waiting for some callback to u
 
 # Aspect Oriented Programming
 
-Aspect Oriented Programming (AOP) is something not well-known in the Objective-C community but it should be as the runtime is so powerful that AOP should be one of the first things that comes to the mind. Unfortunately, as there is no standard de facto library, nothing comes ready to use out-of-the-box from Apple and the topic is far from being trivial, developers still don't think of it in nowadays. 
+Aspect Oriented Programming (AOP) is something not well-known in the Objective-C community but it should be as the runtime is so powerful that AOP should be one of the first things that comes to the mind. Unfortunately, as there is no standard de facto library, nothing comes ready to use out-of-the-box from Apple and the topic is far from being trivial, developers still don't think of it in nowadays.
 
 Quoting the [Aspect Oriented Programming](http://en.wikipedia.org/wiki/Aspect-oriented_programming) Wikipedia page:
 
@@ -2110,7 +2202,7 @@ In the world of Objective-C this means using the runtime features to add *aspect
 * add code to be performed after a specific method call on a specific class
 * add code to be performed instead of the original implementation of a specific method call on a specific class
 
-There are many ways to achieve this we are not digging into deep here, basically all of them leverage the power of the runtime. 
+There are many ways to achieve this we are not digging into deep here, basically all of them leverage the power of the runtime.
 [Peter Steinberger](https://twitter.com/steipete) wrote a library, [Aspects](https://github.com/steipete/Aspects) that fits the AOP approach perfectly. We found it reliable and well-designed and we are going to use it here for sake of simplicity.
 As said for all the AOP-ish libraries, the library does some cool magic with the runtime, replacing and adding methods (further tricks over the method swizzling technique).
 The API of Aspect are interesting and powerful:
@@ -2179,7 +2271,7 @@ This approach is clean and unobtrusive:
 * the view controllers will not get dirty with code that does not naturally belongs to them
 * it becomes possible to specify a SPOC file (single point of customization) for all the aspects to add to our code
 * the SPOC should be used to add the aspects at the very startup of the app
-* if the SPOC file is malformed and at least one selector or class is not recognized, the app will crash at startup (which is cool for our purposes) 
+* if the SPOC file is malformed and at least one selector or class is not recognized, the app will crash at startup (which is cool for our purposes)
 * the team in the company responsible for managing the analytics usually provides a document with the list of *things* to track; this document could then be easily mapped to a SPOC file
 * as the logic for the tracking is now abstracted, it becomes possible to scale with a grater number of analytics providers
 * for screen views it is enough to specify in the SPOC file the classes involved (the corresponding aspect will be added to the `viewDidAppear:` method), for events it is necessary to specify the selectors. To send both screen views and events, a tracking label and maybe extra meta data are needed to provide extra information (depending on the analytics provider).
